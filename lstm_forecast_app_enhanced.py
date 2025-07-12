@@ -20,12 +20,13 @@ if uploaded_file:
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(df["Close"].values.reshape(-1, 1))
 
-    seq_length = 60
+   # Automatically determine sequence length as 20% of data length, minimum of 1
+seq_length = max(1, int(len(scaled_data) * 0.2))
 
-    # Check if data is long enough
-    if len(scaled_data) <= seq_length:
-        st.error(f"Your dataset is too short. At least {seq_length + 1} rows are required, but you only provided {len(scaled_data)}.")
-        st.stop()
+if len(scaled_data) <= seq_length:
+    st.error(f"Your dataset is too short. At least {seq_length + 1} rows are required, but you only provided {len(scaled_data)}.")
+    st.stop()
+
 
     X, y = [], []
     for i in range(seq_length, len(scaled_data)):
